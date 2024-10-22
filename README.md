@@ -7,8 +7,7 @@ The Personal Expense Tracker API is a RESTful API that allows users to manage th
 - [Technologies](#technologies)
 - [Setup Instructions](#setup-instructions)
 - [API Documentation](#api-documentation)
-- [Examples](#examples)
-- [License](#license)
+
 
 ## Technologies
 
