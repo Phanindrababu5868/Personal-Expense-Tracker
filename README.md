@@ -28,7 +28,7 @@ The Personal Expense Tracker API is a RESTful API that allows users to manage th
 
 1. **Clone the Repository**
    ```bash
-   git clone https://github.com/yourusername/personal-expense-tracker-api.git
+   git clone https://github.com/Phanindrababu5868/Personal-Expense-Tracker
    cd personal-expense-tracker-api
    ```
 2. **Install Dependencies**
