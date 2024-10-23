@@ -128,6 +128,69 @@ const getTransactionSummary = async (req, res) => {
   }
 };
 
+// Generates monthly spending reports by category
+// method GET
+// route /api/transactions/report?year=year&month=month
+const getMonthlySpendReport = async (req, res) => {
+  const { year, month } = req.query;
+
+  const yearInt = parseInt(year);
+  const monthInt = parseInt(month);
+
+  if (!year || !month) {
+    return res
+      .status(400)
+      .json({ message: "Please provide both year and month." });
+  }
+
+  try {
+    const startDate = new Date(yearInt, monthInt - 1, 1); // Start of the month
+    const endDate = new Date(yearInt, monthInt, 0, 23, 59, 59, 999); // End of the month
+
+    const report = await Transaction.aggregate([
+      {
+        $match: {
+          user: req.user._id,
+          type: "expense",
+          date: {
+            $gte: startDate,
+            $lte: endDate,
+          },
+        },
+      },
+      {
+        $group: {
+          _id: "$category",
+          totalAmount: { $sum: "$amount" },
+        },
+      },
+      {
+        $lookup: {
+          from: "categories",
+          localField: "_id",
+          foreignField: "_id",
+          as: "categoryInfo",
+        },
+      },
+      {
+        $unwind: "$categoryInfo",
+      },
+      {
+        $project: {
+          _id: 1,
+          totalAmount: 1,
+          name: "$categoryInfo.name",
+        },
+      },
+    ]);
+
+    res.status(200).json(report);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
 module.exports = {
   addTransaction,
   getTransactions,
@@ -135,4 +198,5 @@ module.exports = {
   updateTransaction,
   deleteTransaction,
   getTransactionSummary,
+  getMonthlySpendReport,
 };
